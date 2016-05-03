@@ -96,11 +96,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Add item to the list
+     * Ask new TodoItem from user and add it to the list
      */
     public void addItem(View view) {
-        showInputDialog();
-        savefile();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("To do:");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        /* Set up the buttons */
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String todoInput;
+                todoInput = input.getText().toString();
+                // Add new item to the list and notify the adapter
+                if (!todoInput.equals("")) {
+                    todos.add(new TodoItem(todoInput));
+                }
+                adapter.notifyDataSetChanged();
+                savefile();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     /**
@@ -112,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
             fos = openFileOutput(filename, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(todos);
-            fos.close();
             oos.close();
+            fos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,39 +163,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Ask new TodoItem from user
-     */
-    public void showInputDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("To do:");
-
-        // Set up the input
-        final EditText input = new EditText(this);
-        // Specify the type of input expected
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-
-        /* Set up the buttons */
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String todoInput = "";
-                todoInput = input.getText().toString();
-                // Add new item to the list and notify the adapter
-                if (todoInput != "") {
-                    todos.add(new TodoItem(todoInput));
-                }
-                adapter.notifyDataSetChanged();
-                savefile();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
-    }
 }
