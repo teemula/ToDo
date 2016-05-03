@@ -8,11 +8,14 @@ import java.io.Serializable;
 public class TodoItem implements Serializable {
     private String todo;
     private boolean isDone;
+    static final long serialVersionUID =12345678920160503L;
 
     public TodoItem(String todo) {
         this.todo = todo;
         isDone = false;
     }
+
+    public TodoItem(){}
 
     public String getTodo() {
         return todo;
